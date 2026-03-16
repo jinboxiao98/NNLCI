@@ -1,0 +1,5 @@
+nvfortran -O3 -gpu=cc80 -cuda Weno_GPU_Charac_Final.f90 -o weno_gpu_solver
+python3 generate_doe.py
+python3 run_batch.py
+
+
