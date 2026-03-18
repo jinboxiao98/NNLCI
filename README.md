@@ -4,12 +4,6 @@
 
 ---
 
-## Why NNLCI
-
-
-
----
-
 ## How to get started?
 
 ### 0. Install Drivers & Environment
