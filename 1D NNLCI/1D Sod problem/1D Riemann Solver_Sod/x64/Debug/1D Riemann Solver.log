@@ -1,0 +1,11 @@
+﻿  1D Riemann Solver.cpp
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(92,47): warning C4101: 'theta': unreferenced local variable
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(91,24): warning C4101: 'iii': unreferenced local variable
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(206,12): warning C4101: 'j': unreferenced local variable
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(276,12): warning C4101: 'j': unreferenced local variable
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(301,12): warning C4101: 'tem': unreferenced local variable
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(304,12): warning C4101: 'h': unreferenced local variable
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(443,40): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(507,15): warning C4101: 'k': unreferenced local variable
+G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\1D Riemann Solver.cpp(507,12): warning C4101: 'j': unreferenced local variable
+  1D Riemann Solver.vcxproj -> G:\Benchmark Paper\NNLCI\1D Riemann Code\1D Riemann Solver\x64\Debug\1D Riemann Solver.exe

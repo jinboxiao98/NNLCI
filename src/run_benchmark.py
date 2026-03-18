@@ -8,56 +8,63 @@ Created on Thu Jan 15 22:15:39 2026
 import os
 import subprocess
 import time
+from pathlib import Path
 
-# --- 配置部分 ---
-SOLVER_EXEC = "./weno_gpu_solver"         # 请确认你的可执行文件名
-INPUT_FILE  = "input_config3_std.nml" # 刚才创建的标准输入文件
-OUTPUT_FILE = "flow_standard_config3.dat"  # 指定输出文件名
+# Get the absolute directory of the current Python script
+BASE_DIR = Path(__file__).parent
+
+# --- Configuration ---
+# Use pathlib to join paths and convert to string for subprocess and Fortran
+SOLVER_EXEC = str(BASE_DIR / "weno_gpu_solver")
+# Point INPUT_FILE to the DATA_VALIDATION directory
+INPUT_FILE  = str(BASE_DIR / "DATA_VALIDATION" / "input_config3_std.nml")
+OUTPUT_FILE = str(BASE_DIR / "flow_standard_config3.dat")
 
 def run_single_benchmark():
-    # 1. 检查必要文件
+    # 1. Check required files
     if not os.path.exists(SOLVER_EXEC):
-        print(f"[Error] 找不到求解器: {SOLVER_EXEC}")
-        print("请先编译 Fortran 代码 (e.g., nvfortran Weno_GPU_Param.f90 -o weno_gpu_solver)")
+        print(f"[Error] Solver not found: {SOLVER_EXEC}")
+        print("Please compile the Fortran code first (e.g., nvfortran Weno_GPU_Param.f90 -o weno_gpu_solver)")
         return
 
     if not os.path.exists(INPUT_FILE):
-        print(f"[Error] 找不到输入文件: {INPUT_FILE}")
-        print("请先创建 input_standard_config6.nml 文件！")
+        print(f"[Error] Input file not found: {INPUT_FILE}")
+        print("Please ensure the input_config3_std.nml file exists in the DATA_VALIDATION directory!")
         return
 
-    # 2. 清理旧的输出文件 (防止误判)
+    # 2. Clean up old output files (to prevent false positives)
     if os.path.exists(OUTPUT_FILE):
         os.remove(OUTPUT_FILE)
-        print(f">>> 已清理旧结果: {OUTPUT_FILE}")
+        print(f">>> Old result cleaned up: {OUTPUT_FILE}")
 
-    # 3. 运行求解器
-    print(f">>> 正在运行标准 Config 3 基准测试...")
+    # 3. Run the solver
+    print(f">>> Running standard Config 3 benchmark...")
     print(f"    Input : {INPUT_FILE}")
     print(f"    Output: {OUTPUT_FILE}")
     print("-" * 40)
 
     start_t = time.time()
     
-    # 构造命令: ./solver input_file output_file
+    # Construct the command: ./solver input_file output_file
     cmd = [SOLVER_EXEC, INPUT_FILE, OUTPUT_FILE]
     
     try:
-        # capture_output=False 让求解器的实时输出直接打印到屏幕上，方便你看到时间步
+        # text=True handles string outputs natively, and omitting capture_output 
+        # allows the solver's real-time output (e.g., time steps) to print to the screen
         subprocess.run(cmd, check=True, text=True)
         
         dur = time.time() - start_t
         print("-" * 40)
         
         if os.path.exists(OUTPUT_FILE):
-            print(f">>> [SUCCESS] 运行成功！耗时: {dur:.2f}s")
-            print(f">>> 结果已保存至: {OUTPUT_FILE}")
-            print(">>> 现在请运行可视化脚本检查流场是否卷起来了。")
+            print(f">>> [SUCCESS] Run completed! Time elapsed: {dur:.2f}s")
+            print(f">>> Results saved to: {OUTPUT_FILE}")
+            print(">>> Now please run the visualization script to check if the flow field has rolled up.")
         else:
-            print(">>> [WARNING] 求解器运行结束，但未生成输出文件。")
+            print(">>> [WARNING] Solver finished running, but no output file was generated.")
 
     except subprocess.CalledProcessError as e:
-        print(f"\n>>> [FAILED] 求解器崩溃，错误码: {e.returncode}")
+        print(f"\n>>> [FAILED] Solver crashed with error code: {e.returncode}")
 
 if __name__ == "__main__":
     run_single_benchmark()

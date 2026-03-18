@@ -10,7 +10,7 @@ import io
 import glob 
 
 # ==============================================================================
-# 配置区域
+# Configuration Area
 # ==============================================================================
 MY_CODE_DIR = "."
 HIS_CODE_DIR = "./2D Riemann WENO3"
@@ -19,17 +19,17 @@ TARGET_NX = 800
 TARGET_NY = 800
 TARGET_T  = 0.25
 
-# 编译命令 (保持不变)
+# Compilation commands (unchanged)
 CMD_COMPILE_MY  = "nvfortran -O3 -cuda -gpu=cc80 Weno_GPU_Charac_Final.f90 -o weno5_solver"
 CMD_COMPILE_HIS = "nvcc -O3 main.cu -o weno3_solver" 
 
-# [核心修改] 分析命令前缀
-# --stats=true: 结束后打印统计表
-# -f: 强制覆盖旧报告
+# [Core Modification] Profiling command prefix
+# --stats=true: Print statistical tables after completion
+# -f: Force overwrite of old reports
 PROFILE_CMD = "nsys profile --stats=true -f true"
 
 # ==============================================================================
-# 1. 准备工作：Patch His Code (保持不变)
+# 1. Preparation: Patch His Code (unchanged)
 # ==============================================================================
 def patch_his_code():
     print(f">>> [Setup] Patching his code in {HIS_CODE_DIR}...")
@@ -43,7 +43,7 @@ def patch_his_code():
     return True
 
 # ==============================================================================
-# 2. 准备工作：Generate My Input (保持不变)
+# 2. Preparation: Generate My Input (unchanged)
 # ==============================================================================
 def generate_my_input():
     print(f">>> [Setup] Generating input_battle.nml...")
@@ -61,7 +61,7 @@ def generate_my_input():
     with open("input_battle.nml", "w") as f: f.write(nml_content)
 
 # ==============================================================================
-# 3. 带 Profiling 的运行函数
+# 3. Run Function with Profiling
 # ==============================================================================
 def run_profiled_benchmark():
     # --- Compile ---
@@ -75,15 +75,16 @@ def run_profiled_benchmark():
     print("="*60)
     if os.path.exists("flow_battle.dat"): os.remove("flow_battle.dat")
     
-    # 构造命令: nsys profile ... ./solver input.nml
+    # Construct command: nsys profile ... ./solver input.nml
     my_cmd = f"{PROFILE_CMD} -o profile_my ./weno5_solver input_battle.nml flow_battle.dat"
     
     start_t = time.time()
-    # check=False 允许我们捕获输出即使 nsys 返回非零(有些警告会导致非零)
+    # check=False allows us to capture output even if nsys returns non-zero 
+    # (some profiling warnings can cause non-zero returns)
     proc_my = subprocess.run(my_cmd, shell=True, capture_output=True, text=True)
     my_time = time.time() - start_t
     
-    # 打印 nsys 的统计输出
+    # Print the statistical output from nsys
     print_nsys_summary(proc_my.stdout, "MY CODE")
 
     # --- Run His Code with Profiler ---
@@ -103,7 +104,7 @@ def run_profiled_benchmark():
     return my_time, his_time
 
 def print_nsys_summary(nsys_output, label):
-    """从 nsys 输出中提取关键表格"""
+    """Extract key tables from nsys output"""
     print(f"\n--- {label} GPU STATISTICS ---")
     
     lines = nsys_output.splitlines()
@@ -111,7 +112,7 @@ def print_nsys_summary(nsys_output, label):
     found_stats = False
     
     for line in lines:
-        # 寻找统计表的开始
+        # Look for the start of the statistical tables
         if "CUDA Kernel Statistics" in line or "CUDA Memory Operation Statistics" in line:
             printing = True
             found_stats = True
@@ -119,10 +120,10 @@ def print_nsys_summary(nsys_output, label):
             continue
         
         if printing:
-            if line.strip() == "": # 空行通常意味着表格结束
+            if line.strip() == "": # An empty line usually means the end of the table
                 printing = False
                 continue
-            # 打印表格内容
+            # Print table content
             print(line)
             
     if not found_stats:
@@ -130,7 +131,7 @@ def print_nsys_summary(nsys_output, label):
         print("\n".join(lines[-20:]))
 
 # ==============================================================================
-# 4. 绘图 (保持不变)
+# 4. Plotting (unchanged)
 # ==============================================================================
 def load_tecplot_slice(filepath, target_y_idx):
     try:
@@ -179,6 +180,6 @@ def visualize_results(my_time, his_time):
 if __name__ == "__main__":
     if patch_his_code():
         generate_my_input()
-        # 运行带 nsys 的测试
+        # Run benchmark with nsys
         t_my, t_his = run_profiled_benchmark()
         visualize_results(t_my, t_his)
