@@ -2,13 +2,9 @@
 
 **NNLCI** is a deep learning framework for high-fidelity flow field reconstruction in fluid dynamics. It utilizes a locally converging input (stencil) approach to map dual low-fidelity (LF) coarse grids to a high-fidelity (HF) fine grid
 
----
-
 ## Why NNLCI
 
 
-
----
 
 ## How to get started?
 
@@ -95,6 +91,7 @@ To verify the installation, run the following commands:
 
 </details>
 
+---
 
 ### 1. Data Generation: The CFD Solver
 The training data is generated using a high-order **WENO-5 JS** scheme solver optimized for GPUs.
@@ -129,7 +126,7 @@ The data generation process is independent for each configuration. To generate d
 
 This produces the high-fidelity (800x) and low-fidelity (100x, 200x) datasets needed for the pipeline.
 
-
+------
 ### 2. The NNLCI Pipeline
 #### Step 2.1: Preprocessing & Smart Sampling
 The `NNLCI_preprocessing.py` script prepares the data using a **Smart Sampling (Shock Masking)** strategy.
@@ -163,7 +160,7 @@ Run `NNLCI_post_processing.py` to evaluate the trained model on unseen test data
 python NNLCI_post_processing.py
 ```
 
-
+--------------------------------------------------------------------------------
 
 ### 3. Further NNLCI Extensions
 **NNLCI** is designed as a modular framework, allowing users to replace the provided WENO-5 JS solver with their own CFD tools, including commercial software such as **Ansys Fluent**, **OpenFOAM**, or **Star-CCM+**.
@@ -202,7 +199,8 @@ While every point in a high-resolution grid could theoretically be a training sa
 - **Efficiency**: This strategy discards redundant smooth-flow data (typically the remaining 50% of the field), allowing for much larger training batch sizes (e.g., 65,536) and faster convergence.
 
 
----
+--------------------------------------------------------------------------------
+
 ## Citation
 
 If you use **NNLCI** in your research, please consider citing it as follows. **Ref. 1 and 2** provide the foundational theory and methodology for Neural Networks with Local Converging Inputs (NNLCI), originally proposing the framework for solving 1D and 2D conservation laws. If your work involves complex geometries or flexible grid configurations, please cite **ref. 3**, which demonstrates the method's extension and flexibility in unstructured-grid computational fluid dynamics.
